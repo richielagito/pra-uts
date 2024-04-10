@@ -62,10 +62,21 @@ async function deleteUser(id) {
   return User.deleteOne({ _id: id });
 }
 
+/**
+ * Check if a email exist
+ * @param {string} email - Email
+ * @returns {Promise}
+ */
+async function checkEmail(email) {
+  const user = await User.findOne({ email });
+  return user;
+}
+
 module.exports = {
   getUsers,
   getUser,
   createUser,
   updateUser,
   deleteUser,
+  checkEmail,
 };

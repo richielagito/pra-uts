@@ -107,10 +107,21 @@ async function deleteUser(id) {
   return true;
 }
 
+/**
+ * Check if a email exist
+ * @param {string} email - Email
+ * @returns {Promise}
+ */
+async function checkDuplicateEmail(email) {
+  const user = await usersRepository.checkEmail(email);
+  return user;
+}
+
 module.exports = {
   getUsers,
   getUser,
   createUser,
   updateUser,
   deleteUser,
+  checkDuplicateEmail,
 };
