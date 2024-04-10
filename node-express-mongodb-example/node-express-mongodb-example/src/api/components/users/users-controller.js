@@ -50,6 +50,14 @@ async function createUser(request, response, next) {
     const name = request.body.name;
     const email = request.body.email;
     const password = request.body.password;
+    const passwordConfirm = request.body.password_confirm;
+
+    if (password !== passwordConfirm) {
+      throw errorResponder(
+        errorTypes.INVALID_PASSWORD,
+        'Invalid Password, Try Again'
+      );
+    }
 
     const emailExist = await usersService.checkDuplicateEmail(email);
     if (emailExist) {
