@@ -12,7 +12,7 @@ module.exports = {
         .min(6)
         .max(32)
         .required()
-        .label('Confirm Password'),
+        .label('passwordConfirm'),
     },
   },
 
