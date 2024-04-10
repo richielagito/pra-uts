@@ -98,7 +98,7 @@ async function updateUser(request, response, next) {
     if (emailExist) {
       throw errorResponder(
         errorTypes.EMAIL_ALREADY_TAKEN,
-        'This email is already taken'
+        'This email is already taken, try use another'
       );
     }
 
