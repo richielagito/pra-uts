@@ -117,6 +117,40 @@ async function checkDuplicateEmail(email) {
   return user;
 }
 
+/**
+ * Change User Password
+ * @param {string} id
+ * @param {string} oldPassword
+ * @param {string} newPassword
+ * @param {string} confirmPassword
+ */
+async function changeUserPassword(
+  id,
+  oldPassword,
+  newPassword,
+  confirmPassword
+) {
+  const user = await usersRepository.getUser(id);
+
+  // User not found
+  if (!user) {
+    return null;
+  }
+
+  try {
+    await usersRepository.changeUserPassword(
+      id,
+      oldPassword,
+      newPassword,
+      confirmPassword
+    );
+  } catch (err) {
+    return null;
+  }
+
+  return true;
+}
+
 module.exports = {
   getUsers,
   getUser,
@@ -124,4 +158,5 @@ module.exports = {
   updateUser,
   deleteUser,
   checkDuplicateEmail,
+  changeUserPassword,
 };

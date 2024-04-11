@@ -1,4 +1,6 @@
 const usersService = require('./users-service');
+const bcrypt = require('bcrypt');
+const { passwordMatched } = require('../../../utils/password');
 const { errorResponder, errorTypes } = require('../../../core/errors');
 
 /**
@@ -63,7 +65,7 @@ async function createUser(request, response, next) {
     if (emailExist) {
       throw errorResponder(
         errorTypes.EMAIL_ALREADY_TAKEN,
-        'This email is already taken'
+        'This email is already taken, try use another'
       );
     }
 
@@ -141,10 +143,58 @@ async function deleteUser(request, response, next) {
   }
 }
 
+/**
+ * Handle change user password request
+ * @param {object} request - Express request object
+ * @param {object} response - Express response object
+ * @param {object} next - Express route middlewares
+ * @returns {object} Response object or pass an error to the next route
+ */
+async function changeUserPassword(request, response, next) {
+  try {
+    const id = request.params.id;
+    const oldPassword = request.body.oldPassword;
+    const newPassword = request.body.newPassword;
+    const passwordConfirm = request.body.passwordConfirm;
+
+    if (newPassword !== passwordConfirm) {
+      throw errorResponder(
+        errorTypes.INVALID_PASSWORD,
+        'Invalid Password, Try Again'
+      );
+    }
+
+    const user = await usersService.getUser(id);
+
+    const userPassword = user ? user.password : '<RANDOM_PASSWORD_FILLER>';
+    const passwordChecked = await passwordMatched(oldPassword, userPassword);
+    console.log(oldPassword, userPassword);
+
+    if (passwordChecked) {
+      await usersService.changeUserPassword(
+        id,
+        oldPassword,
+        newPassword,
+        passwordConfirm
+      );
+    } else {
+      throw errorResponder(
+        errorTypes.UNPROCESSABLE_ENTITY,
+        'Failed to change user password'
+      );
+    }
+
+    return response.status(200).json({ id });
+  } catch (error) {
+    return next(error);
+  }
+}
+
 module.exports = {
   getUsers,
   getUser,
   createUser,
   updateUser,
   deleteUser,
+  changeUserPassword,
 };
