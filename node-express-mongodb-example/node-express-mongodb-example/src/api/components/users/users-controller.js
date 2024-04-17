@@ -1,4 +1,5 @@
 const usersService = require('./users-service');
+const usersRepository = require('./users-repository');
 const bcrypt = require('bcrypt');
 const { passwordMatched } = require('../../../utils/password');
 const { errorResponder, errorTypes } = require('../../../core/errors');
@@ -164,19 +165,13 @@ async function changeUserPassword(request, response, next) {
       );
     }
 
-    const user = await usersService.getUser(id);
+    const user = await usersRepository.getUser(id);
 
     const userPassword = user ? user.password : '<RANDOM_PASSWORD_FILLER>';
     const passwordChecked = await passwordMatched(oldPassword, userPassword);
-    console.log(oldPassword, userPassword);
 
     if (passwordChecked) {
-      await usersService.changeUserPassword(
-        id,
-        oldPassword,
-        newPassword,
-        passwordConfirm
-      );
+      await usersService.changeUserPassword(id, newPassword);
     } else {
       throw errorResponder(
         errorTypes.UNPROCESSABLE_ENTITY,

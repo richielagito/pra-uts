@@ -123,13 +123,9 @@ async function checkDuplicateEmail(email) {
  * @param {string} oldPassword
  * @param {string} newPassword
  * @param {string} confirmPassword
+ * @returns {boolean}
  */
-async function changeUserPassword(
-  id,
-  oldPassword,
-  newPassword,
-  confirmPassword
-) {
+async function changeUserPassword(id, newPassword) {
   const user = await usersRepository.getUser(id);
 
   // User not found
@@ -138,12 +134,7 @@ async function changeUserPassword(
   }
 
   try {
-    await usersRepository.changeUserPassword(
-      id,
-      oldPassword,
-      newPassword,
-      confirmPassword
-    );
+    await usersRepository.changeUserPassword(id, newPassword);
   } catch (err) {
     return null;
   }
